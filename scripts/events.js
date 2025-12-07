@@ -36,7 +36,7 @@ Hooks.once("ready", () => {
                 const dc = match[2];
 
                 const typeMapping = SAVE_MAPPING.filter(sm => sm.name === type);
-                if (typeMapping && typeMapping.length === 0) {
+                if (typeMapping && typeMapping.length !== 0) {
                     printCheck({type: "save", optionValue: typeMapping[0].value, dc: dc})
                 } else {
                     console.log(`I don't know what ${type} should be!`)
