@@ -27,7 +27,7 @@ const OptionTypeValueToAbility = {
 Hooks.once("ready", () => {
     if (game.user.isGM) {
         console.log("Init Auto Save Button")
-        Hooks.on("renderChatMessage", (chatlog, chatData) => {
+        Hooks.on("renderChatMessageHTML", (chatlog, chatData) => {
             console.log('checking', chatlog);
             const filter = /Save: ([A-Za-z]+) DC ([0-9]+)/;
             const match = chatlog.content.replace(/<[^>]*>/g, '').match(filter);
