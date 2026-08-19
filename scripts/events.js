@@ -27,8 +27,14 @@ const OptionTypeValueToAbility = {
 Hooks.once("ready", () => {
     if (game.user.isGM) {
         console.log("Init Auto Save Button")
+        const checkedMessageIds = [];
         Hooks.on("renderChatMessageHTML", (chatlog, chatData) => {
+            if (checkedMessageIds.includes(chatlog.uuid)) {
+                // already checked
+                return;
+            }
             console.log('checking', chatlog);
+            checkedMessageIds.push(chatlog.uuid);
             const filter = /Save: ([A-Za-z]+) DC ([0-9]+)/;
             const match = chatlog.content.replace(/<[^>]*>/g, '').match(filter);
             if (match) {
