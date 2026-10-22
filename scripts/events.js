@@ -55,40 +55,27 @@ Hooks.once("ready", () => {
 });
 
 function printCheck(formdata) {
-    const type = formdata.type;
-    const optionValue = formdata.optionValue;
-    const dc = formdata.dc;
-    let message =
-        `
-            <div class="dnd5e2 chat-card request-card">
-                <div class="card-buttons">
-                    <button
-                        data-type="${type}"
-                        data-format="long"
-                        ${dc !== '' ? `data-dc="${dc}"` : ''}
-                        data-ability="${OptionTypeValueToAbility[optionValue].ability}"
-                        data-action="rollRequest"
-                        data-visibility="all">
-                        <span class="visible-dc">
-                            ${Types[type].icon}
-                            ${dc !== '' ? `DC ${dc} ` : ''}${OptionTypeValueToAbility[optionValue].text}
-                        </span>
-                        <span class="hidden-dc">
-                            ${Types[type].icon}
-                            ${OptionTypeValueToAbility[optionValue].text}
-                        </span>
-                    </button>
-                </div>
-            </div>
-        `;
+    const buttons = [{
+        type: TypeFromTypeGroup[formdata.type],
+        dc: Number(formdata.dc),
+        format: 'short',
+        ability: OptionTypeValueToAbility[formdata.optionValue].ability,
+    }];
+    buttons.forEach((button) => {
+        if (button.type === "tool") {
+            button.usingTool = true;
+            button.tool = formdata.optionValue;
+        } else if (button.type === "skill") {
+            button.skill = formdata.optionValue;
+        }
+    })
 
-    let chatData = {
-        user: game.user.id,
-        flavor: 'Roll Request',
-        content: message,
-        speaker: {alias: "Auto Save Button"},
-        blind: false
-    };
-
-    ChatMessage.create(chatData);
+    const MessageClass = getDocumentClass("ChatMessage");
+    MessageClass.create({
+        flavor: _loc("EDITOR.DND5E.Inline.RollRequest"),
+        speaker: MessageClass.getSpeaker({user: game.user}),
+        system: {broadcast: true, buttons},
+        type: "prompt",
+        user: game.user.id
+    });
 }
