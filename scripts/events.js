@@ -1,9 +1,5 @@
 // --- CONFIGURATION ---
 
-const Types = {
-    "save": {text: "Save", icon: '<i class="fas fa-shield-heart"></i>'},
-}
-
 const SAVE_MAPPING = [
     {name: "Strength", value: "str"},
     {name: "Dexterity", value: "dex"},
@@ -56,7 +52,7 @@ Hooks.once("ready", () => {
 
 function printCheck(formdata) {
     const buttons = [{
-        type: TypeFromTypeGroup[formdata.type],
+        type: formdata.type,
         dc: Number(formdata.dc),
         format: 'short',
         ability: OptionTypeValueToAbility[formdata.optionValue].ability,
