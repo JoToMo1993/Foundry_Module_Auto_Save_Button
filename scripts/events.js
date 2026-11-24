@@ -1,5 +1,5 @@
 // --- CONFIGURATION ---
-
+const MacroName = 'auto_save_button';
 const SAVE_MAPPING = [
     {name: "Strength", value: "str"},
     {name: "Dexterity", value: "dex"},
@@ -20,10 +20,20 @@ const OptionTypeValueToAbility = {
 }
 //@formatter:on
 
-Hooks.once("ready", () => {
+Hooks.once("ready", async () => {
+    await game.settings.register(MacroName, 'already_created', {
+        name: 'Already Created Buttons',
+        hint: 'Stores the list of uuids of messages, which already have been created for',
+        scope: 'user',
+        config: false,
+        type: Array,
+        default: [],
+        filePicker: false,
+        requiresReload: false,
+    });
     if (game.user.isGM) {
         console.log("Init Auto Save Button")
-        const checkedMessageIds = [];
+        const checkedMessageIds = game.settings.get(MacroName, 'already_created');
         Hooks.on("renderChatMessageHTML", (chatlog, chatData) => {
             if (checkedMessageIds.includes(chatlog.uuid)) {
                 // already checked
@@ -31,6 +41,7 @@ Hooks.once("ready", () => {
             }
             console.log('checking', chatlog);
             checkedMessageIds.push(chatlog.uuid);
+            game.settings.set(MacroName, 'already_created', checkedMessageIds);
             const filter = /Save: ([A-Za-z]+) DC ([0-9]+)/;
             const match = chatlog.content.replace(/<[^>]*>/g, '').match(filter);
             if (match) {
